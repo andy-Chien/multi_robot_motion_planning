@@ -1,0 +1,6 @@
+[submodule "moveit_plugins"]
+	path = moveit_plugins
+	url = https://github.com/andy-Chien/moveit_plugins.git
+[submodule "universal_robots/Universal_Robots_ROS2_Driver"]
+	path = universal_robots/Universal_Robots_ROS2_Driver
+	url = https://github.com/andy-Chien/Universal_Robots_ROS2_Driver.git
