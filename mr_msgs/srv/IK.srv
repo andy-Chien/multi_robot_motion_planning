@@ -1,0 +1,13 @@
+# current_pose: length: 16, flattened array from SE3 matrix
+float32[] current_pose
+
+# goal_pose: length: 16, flattened array from SE3 matrix
+float32[] goal_pose
+
+# current_joint length: 9, x, y, theta, j1~j6
+float32[] current_joint
+
+---
+
+# current_joint length: 9, x, y, theta, j1~j6
+float32[] joint_speed

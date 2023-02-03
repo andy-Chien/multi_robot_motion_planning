@@ -1,0 +1,7 @@
+string robot_name
+
+---
+
+mr_msgs/Obstacles static_obstacles
+mr_msgs/Obstacles dynamic_obstacles
+
