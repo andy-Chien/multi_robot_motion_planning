@@ -21,6 +21,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Sample.msg"
   "msg/ServoControl.msg"
   "msg/Obstacles.msg"
+  "msg/Pose.msg"
+  "msg/Poses.msg"
   "srv/Sample.srv"
   "srv/IK.srv"
   "srv/PathToTraj.srv"
