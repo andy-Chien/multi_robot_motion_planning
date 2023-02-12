@@ -1,3 +1,6 @@
+std_msgs/Header        header
+string                 name
+
 shape_msgs/Mesh[]      meshes
 mr_msgs/Poses[]        meshes_poses
 

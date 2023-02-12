@@ -13,6 +13,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
+find_package(trajectory_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(controller_manager_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
@@ -28,6 +29,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/PathToTraj.srv"
   "srv/TrajMerge.srv"
   "srv/GetRobotTrajectoryObstacle.srv"
+  "srv/SetPlannedTrajectory.srv"
   "action/Sample.action"
 DEPENDENCIES
   std_msgs
@@ -36,6 +38,7 @@ DEPENDENCIES
   moveit_msgs
   geometry_msgs
   lifecycle_msgs
+  trajectory_msgs
   tf2_geometry_msgs
   controller_manager_msgs
   rosidl_default_generators
