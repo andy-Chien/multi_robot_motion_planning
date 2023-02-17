@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mr_controllers</name>
+  <version>2.2.6</version>
+  <description>Provides controllers for multi-robot planning.</description>
+
+  <maintainer email="808790017@gms.tku.edu.tw">Andy Chien</maintainer>
+
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>angles</depend>
+  <depend>controller_interface</depend>
+  <depend>joint_trajectory_controller</depend>
+  <depend>lifecycle_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>rcutils</depend>
+  <depend>realtime_tools</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>ur_dashboard_msgs</depend>
+  <depend>ur_msgs</depend>
+  <depend>mr_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

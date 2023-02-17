@@ -1,0 +1,7 @@
+std_msgs/Header              header
+float64                      speed_scale 1.0
+bool                         erase false
+
+---
+
+bool success
