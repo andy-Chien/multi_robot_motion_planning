@@ -103,15 +103,17 @@ void MRJointTrajectoryController::goal_accepted_callback(
       "'%s' wait for service exist '%s' failed!", 
       robot_name_.c_str(), set_traj_service_name.c_str());
   }
-  std::shared_future<std::shared_ptr<mr_msgs::srv::MarkTrajectoryState_Response>> 
-    future = mark_traj_client_->async_send_request(req).future.share();
-
-  while(future.wait_for(std::chrono::milliseconds(500)) == std::future_status::timeout)
-  {
-    RCLCPP_ERROR(get_node()->get_logger(),
-      "'%s' wait for service response'%s' failed!", 
-      robot_name_.c_str(), mark_traj_service_name.c_str());
-  }
+  set_traj_client_->async_send_request(req, [this](
+    const rclcpp::Client<mr_msgs::srv::SetTrajectoryState>::SharedFuture future) -> void {
+      if(future.get()->success){
+        RCLCPP_ERROR(get_node()->get_logger(),
+          "'%s' Failed to set trajectory start time!", robot_name_.c_str());
+      }else{
+        RCLCPP_INFO(get_node()->get_logger(),
+          "'%s' Success to set trajectory start time!", robot_name_.c_str());
+      }
+    }
+  );
 }
 }  // namespace mr_controllers
 
