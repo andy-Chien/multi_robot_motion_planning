@@ -29,8 +29,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/PathToTraj.srv"
   "srv/TrajMerge.srv"
   "srv/GetRobotTrajectoryObstacle.srv"
-  "srv/SetPlannedTrajectory.srv"
-  "srv/MarkTrajectoryState.srv"
+  "srv/SetTrajectoryState.srv"
   "action/Sample.action"
 DEPENDENCIES
   std_msgs

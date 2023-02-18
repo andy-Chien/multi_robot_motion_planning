@@ -44,7 +44,7 @@
 // #include "rclcpp/time.hpp"
 // #include "rclcpp/duration.hpp"
 
-#include "mr_msgs/srv/mark_trajectory_state.hpp"
+#include "mr_msgs/srv/set_trajectory_state.hpp"
 
 namespace mr_controllers
 {
@@ -70,7 +70,7 @@ protected:
   
 private:
   std::string robot_name_;
-  rclcpp::Client<mr_msgs::srv::MarkTrajectoryState>::SharedPtr mark_traj_client_;
+  rclcpp::Client<mr_msgs::srv::SetTrajectoryState>::SharedPtr set_traj_client_;
 };
 }  // namespace mr_controllers
 

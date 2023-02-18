@@ -42,15 +42,15 @@
 
 #include "lifecycle_msgs/msg/state.hpp"
 
-std::string mark_traj_service_name("/mark_traj_state");
+std::string set_traj_service_name("/set_trajectory_state");
 
 namespace mr_controllers
 {
 controller_interface::CallbackReturn MRJointTrajectoryController::on_init()
 {
   robot_name_ = get_node()->get_namespace();
-  mark_traj_client_ = get_node()->create_client<
-      mr_msgs::srv::MarkTrajectoryState>(mark_traj_service_name);
+  set_traj_client_ = get_node()->create_client<
+      mr_msgs::srv::SetTrajectoryState>(set_traj_service_name);
   return JointTrajectoryController::on_init();
 }
 
@@ -94,14 +94,14 @@ void MRJointTrajectoryController::goal_accepted_callback(
 {
   JointTrajectoryController::goal_accepted_callback(goal_handle);
 
-  auto req = std::make_shared<mr_msgs::srv::MarkTrajectoryState::Request>();
+  auto req = std::make_shared<mr_msgs::srv::SetTrajectoryState::Request>();
   req->header.stamp = get_node()->now();
   req->header.frame_id = robot_name_;
-
-  while(!mark_traj_client_->wait_for_service(std::chrono::milliseconds(500))){
+  req->action = mr_msgs::srv::SetTrajectoryState::Request::MARK_TRAJECTORY_START_TIME;
+  while(!set_traj_client_->wait_for_service(std::chrono::milliseconds(500))){
     RCLCPP_ERROR(get_node()->get_logger(),
       "'%s' wait for service exist '%s' failed!", 
-      robot_name_.c_str(), mark_traj_service_name.c_str());
+      robot_name_.c_str(), set_traj_service_name.c_str());
   }
   std::shared_future<std::shared_ptr<mr_msgs::srv::MarkTrajectoryState_Response>> 
     future = mark_traj_client_->async_send_request(req).future.share();
