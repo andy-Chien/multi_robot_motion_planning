@@ -106,11 +106,11 @@ void MRJointTrajectoryController::goal_accepted_callback(
   set_traj_client_->async_send_request(req, [this](
     const rclcpp::Client<mr_msgs::srv::SetTrajectoryState>::SharedFuture future) -> void {
       if(future.get()->success){
-        RCLCPP_ERROR(get_node()->get_logger(),
-          "'%s' Failed to set trajectory start time!", robot_name_.c_str());
-      }else{
         RCLCPP_INFO(get_node()->get_logger(),
           "'%s' Success to set trajectory start time!", robot_name_.c_str());
+      }else{
+        RCLCPP_ERROR(get_node()->get_logger(),
+          "'%s' Failed to set trajectory start time!", robot_name_.c_str());
       }
     }
   );
