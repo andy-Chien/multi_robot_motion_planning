@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:macro name="tool_marco" params="prefix">
+        <link name="${prefix}tool_base">
+            <visual>
+                <origin
+                    xyz="0 0 0"
+                    rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find mr_description)/meshes/tool/suction_tool.stl" />
+                </geometry>
+                <material name="">
+                    <color rgba="0.75294 0.75294 0.75294 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin
+                    xyz="0 0 0"
+                    rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find mr_description)/meshes/tool/suction_tool_bigger.stl" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}tool_base-tool_tip" type="fixed">
+            <origin xyz="0 0 0.178" rpy="0 0 0"/>
+            <parent link="${prefix}tool_base"/>
+            <child link="${prefix}tool_tip"/>
+        </joint>
+        <link name="${prefix}tool_tip"/>
+  </xacro:macro>
+</robot>

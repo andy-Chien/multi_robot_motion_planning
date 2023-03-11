@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="hiwin_gripper">
+    <link name="tool_base">
+        <visual>
+            <origin
+                xyz="0 0 0"
+                rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ur_description/meshes/tool/tool_no_suctoin_1.stl" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin
+                xyz="0 0 0"
+                rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ur_description/meshes/tool/tool_no_suctoin_1.stl" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="tool_base-tool_tip" type="fixed">
+        <origin xyz="0 0 0.178" rpy="0 0 0"/>
+        <parent link="tool_base"/>
+        <child link="tool_tip"/>
+    </joint>
+    <link name="tool_tip"/>
+</robot>
