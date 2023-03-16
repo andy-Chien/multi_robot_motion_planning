@@ -56,14 +56,10 @@ def launch_setup(context, *args, **kwargs):
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
     # General arguments
-    runtime_config_package = LaunchConfiguration("runtime_config_package")
-    controllers_file = LaunchConfiguration("controllers_file")
-    description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     prefix = LaunchConfiguration("prefix")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
-    initial_joint_controller = LaunchConfiguration("initial_joint_controller")
     activate_joint_controller = LaunchConfiguration("activate_joint_controller")
     launch_rviz = LaunchConfiguration("launch_rviz")
     headless_mode = LaunchConfiguration("headless_mode")
@@ -79,18 +75,20 @@ def launch_setup(context, *args, **kwargs):
     tool_voltage = LaunchConfiguration("tool_voltage")
     pose_xyz = LaunchConfiguration("pose_xyz")
     pose_rpy = LaunchConfiguration("pose_rpy")
+    multi_arm = LaunchConfiguration("multi_arm")
+
 
     joint_limit_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config/universal_robots", ur_type, "joint_limits.yaml"]
+        [FindPackageShare("mr_description"), "config", "universal_robots", ur_type, "joint_limits.yaml"]
     )
     kinematics_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config/universal_robots", ur_type, "default_kinematics.yaml"]
+        [FindPackageShare("ur_description"), "config", ur_type, "default_kinematics.yaml"]
     )
     physical_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config/universal_robots", ur_type, "physical_parameters.yaml"]
+        [FindPackageShare("ur_description"), "config", ur_type, "physical_parameters.yaml"]
     )
     visual_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config/universal_robots", ur_type, "visual_parameters.yaml"]
+        [FindPackageShare("ur_description"), "config", ur_type, "visual_parameters.yaml"]
     )
     script_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources", "ros_control.urscript"]
@@ -111,7 +109,8 @@ def launch_setup(context, *args, **kwargs):
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
-            PathJoinSubstitution([FindPackageShare(description_package), "urdf/universal_robots", description_file]),
+            PathJoinSubstitution(
+                [FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
             " ",
             "robot_ip:=",
             robot_ip,
@@ -215,61 +214,54 @@ def launch_setup(context, *args, **kwargs):
     # )
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(description_package), "rviz", "view_robot.rviz"]
+        [FindPackageShare("mr_config"), "rviz", "view_robot.rviz"]
     )
 
     # define update rate
     update_rate_config_file = PathJoinSubstitution(
         [
-            FindPackageShare(runtime_config_package),
-            "config",
+            FindPackageShare("mr_config"),
+            "config", "universal_robots",
             ur_type.perform(context) + "_update_rate.yaml",
         ]
     )
 
-        # ros2_control using FakeSystem as hardware
+    # ros2_control using FakeSystem as hardware
     ros2_controllers_path = PathJoinSubstitution(
-        [FindPackageShare("ur_robot_driver"), "config", controllers_file]
+        [FindPackageShare("mr_config"), "config", "universal_robots", "ur_controllers.yaml"]
     )
     ns_text = ns.perform(context)
     prefix_text = prefix.perform(context)
-    controllers_file_text = controllers_file.perform(context)
-    ros2_controllers_path_text = ros2_controllers_path.perform(context)
     if ns_text != "" or prefix_text != "":
-        ros2_controllers_yaml = load_yaml("ur_robot_driver", "config/" + controllers_file_text)
-        jtc = 'joint_trajectory_controller'
-        rp = 'ros__parameters'
+        ros2_controllers_yaml = load_yaml("mr_config", "config/universal_robots/ur_controllers.yaml")
         if prefix_text != "":
-            ros2_controllers_yaml[jtc][rp]["joints"] = \
-                [prefix_text + j for j in ros2_controllers_yaml[jtc][rp]["joints"]]
-            ros2_controllers_yaml["scaled_" + jtc][rp]["joints"] = \
-                [prefix_text + j for j in ros2_controllers_yaml["scaled_" + jtc][rp]["joints"]]
-            ros2_controllers_yaml["mr_" + jtc][rp]["joints"] = \
-                [prefix_text + j for j in ros2_controllers_yaml["mr_" + jtc][rp]["joints"]]
+            for v in ros2_controllers_yaml.values():
+                if 'joints' not in v['ros__parameters']:
+                    continue
+                if 'constraints' in v['ros__parameters']:
+                    for j_name in v['ros__parameters']["joints"]:
+                        v['ros__parameters']['constraints'][prefix_text + j_name] = \
+                            v['ros__parameters']['constraints'][j_name]
+                        del v['ros__parameters']['constraints'][j_name]
+                v['ros__parameters']["joints"] = [prefix_text + j for j in v['ros__parameters']["joints"]]
         if ns_text != "":
-            ros2_controllers_yaml[ns_text] = dict()
-            ros2_controllers_yaml[ns_text][jtc] = \
-                ros2_controllers_yaml[jtc]
-            ros2_controllers_yaml[ns_text]["scaled_" + jtc] = \
-                ros2_controllers_yaml["scaled_" + jtc]
-            ros2_controllers_yaml[ns_text]["mr_" + jtc] = \
-                ros2_controllers_yaml["mr_" + jtc]
-            del ros2_controllers_yaml[jtc]
-            del ros2_controllers_yaml["scaled_" + jtc]
-            del ros2_controllers_yaml["mr_" + jtc]
+            ros2_controllers_yaml = {ns_text: ros2_controllers_yaml}
 
-        ros2_controllers_yaml['/**'] = None
-        del ros2_controllers_yaml['/**']
-
-        with open(ros2_controllers_path_text, "r") as file_in:
-            file_in_text = file_in.read()
-            file_out = get_package_share_directory("ur_robot_driver") + \
-                "/config/" + prefix_text + controllers_file_text
-            with open(file_out, "w") as file_out:
-                file_out.write(file_in_text + yaml.dump(ros2_controllers_yaml))
+        file_name = ns_text + prefix_text + "ur_controllers.yaml"
+        file_out = get_package_share_directory("mr_config") + "/config/universal_robots/" + file_name
+        with open(file_out, "w") as file_out:
+            file_out.write(yaml.dump(ros2_controllers_yaml))
         ros2_controllers_path = PathJoinSubstitution(
-            [FindPackageShare("ur_robot_driver"), "config", prefix_text + controllers_file_text]
+            [FindPackageShare("mr_config"), "config", "universal_robots", file_name]
         )
+
+    multi_arm_text = multi_arm.perform(context)
+    use_fake_hardware_text = use_fake_hardware.perform(context)
+    joint_trajectory_controller_to_spawn = "scaled_joint_trajectory_controller"
+    if multi_arm_text == "true":
+        joint_trajectory_controller_to_spawn = "mr_joint_trajectory_controller"
+    elif use_fake_hardware_text == "true":
+        joint_trajectory_controller_to_spawn = "joint_trajectory_controller"
 
     control_node = Node(
         package="controller_manager",
@@ -420,14 +412,14 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="spawner",
         namespace=ns,
-        arguments=[initial_joint_controller, "-c", "controller_manager"],
+        arguments=[joint_trajectory_controller_to_spawn, "-c", "controller_manager"],
         condition=IfCondition(activate_joint_controller),
     )
     initial_joint_controller_spawner_stopped = Node(
         package="controller_manager",
         executable="spawner",
         namespace=ns,
-        arguments=[initial_joint_controller, "-c", "controller_manager", "--inactive"],
+        arguments=[joint_trajectory_controller_to_spawn, "-c", "controller_manager", "--inactive"],
         condition=UnlessCondition(activate_joint_controller),
     )
 
@@ -443,7 +435,7 @@ def launch_setup(context, *args, **kwargs):
         io_and_status_controller_spawner,
         speed_scaling_state_broadcaster_spawner,
         force_torque_sensor_broadcaster_spawner,
-        # forward_position_controller_spawner_stopped,
+        forward_position_controller_spawner_stopped,
         initial_joint_controller_spawner_stopped,
         initial_joint_controller_spawner_started,
     ]
@@ -533,14 +525,6 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "description_package",
-            default_value="mr_description",
-            description="Description package with robot URDF/XACRO files. Usually the argument \
-        is not set, it enables use of a custom description.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "description_file",
             default_value="ur.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
@@ -553,6 +537,13 @@ def generate_launch_description():
             description="Prefix of the joint names, useful for \
         multi-robot setup. If changed than also joint names in the controllers' configuration \
         have to be updated.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "multi_arm",
+            default_value="false",
+            description="Indicate running with multi robot or not.",
         )
     )
     declared_arguments.append(
@@ -575,13 +566,6 @@ def generate_launch_description():
             "headless_mode",
             default_value="false",
             description="Enable headless mode for robot control",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "initial_joint_controller",
-            default_value="joint_trajectory_controller",
-            description="Initially loaded robot controller.",
         )
     )
     declared_arguments.append(

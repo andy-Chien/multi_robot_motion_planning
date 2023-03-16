@@ -14,20 +14,6 @@ from launch_ros.actions import Node
 from ur_moveit_config.launch_common import load_yaml
 
 #robot parameters
-# RP = {
-#     'robot_1': {
-#         'ur_type': 'ur10e',
-#         'prefix': 'robot_1_',
-#         'pose_xyz': '"0 -0.7 0"',
-#         'pose_rpy': '"0 0 -1.5707963"'
-#     },
-#     'robot_2': {
-#         'ur_type': 'ur10e',
-#         'prefix': 'robot_2_',
-#         'pose_xyz': '"0 0.7 0"',
-#         'pose_rpy': '"0 0 1.5707963"'
-#     }
-# }
 #  '"0.21502 0.78661 -0.0766"'
 #  [ -0.0125393, 0.0059258, 0.0176579, 0.9997479 ] xyzw
 #  '"-0.58768 0.26583 -014994"'
@@ -62,7 +48,7 @@ def launch_setup(context, *args, **kwargs):
     for rn in RP: # rn: robot_name
         launch_ur_control = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                [FindPackageShare("ur_robot_driver"), "/launch", "/ur_control.launch.py"]
+                [FindPackageShare("mr_config"), "/launch", "/ur_control.launch.py"]
             ),
             launch_arguments={
                 "use_sim_time": 'false',

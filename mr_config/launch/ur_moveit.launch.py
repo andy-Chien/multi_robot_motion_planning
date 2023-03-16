@@ -54,10 +54,6 @@ def launch_setup(context, *args, **kwargs):
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
     # General arguments
-    description_package = LaunchConfiguration("description_package")
-    description_file = LaunchConfiguration("description_file")
-    moveit_config_package = LaunchConfiguration("moveit_config_package")
-    moveit_config_file = LaunchConfiguration("moveit_config_file")
     warehouse_sqlite_path = LaunchConfiguration("warehouse_sqlite_path")
     prefix = LaunchConfiguration("prefix")
     use_sim_time = LaunchConfiguration("use_sim_time")
@@ -69,23 +65,24 @@ def launch_setup(context, *args, **kwargs):
     multi_arm = LaunchConfiguration("multi_arm")
 
     joint_limit_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config", ur_type, "joint_limits.yaml"]
+        [FindPackageShare("mr_description"), "config", "universal_robots", ur_type, "joint_limits.yaml"]
     )
     kinematics_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config", ur_type, "default_kinematics.yaml"]
+        [FindPackageShare("ur_description"), "config", ur_type, "default_kinematics.yaml"]
     )
     physical_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config", ur_type, "physical_parameters.yaml"]
+        [FindPackageShare("ur_description"), "config", ur_type, "physical_parameters.yaml"]
     )
     visual_params = PathJoinSubstitution(
-        [FindPackageShare(description_package), "config", ur_type, "visual_parameters.yaml"]
+        [FindPackageShare("ur_description"), "config", ur_type, "visual_parameters.yaml"]
     )
 
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
-            PathJoinSubstitution([FindPackageShare(moveit_config_package), "urdf", description_file]),
+            PathJoinSubstitution(
+                [FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
             " ",
             "robot_ip:=xxx.yyy.zzz.www",
             " ",
@@ -144,7 +141,7 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare(moveit_config_package), "srdf", moveit_config_file]
+                [FindPackageShare("mr_config"), "srdf", "universal_robots", "ur.srdf.xacro"]
             ),
             " ",
             "name:=",
@@ -160,12 +157,8 @@ def launch_setup(context, *args, **kwargs):
     robot_description_semantic = {"robot_description_semantic": robot_description_semantic_content}
 
     robot_description_kinematics = PathJoinSubstitution(
-        [FindPackageShare(moveit_config_package), "config", "kinematics.yaml"]
+        [FindPackageShare("mr_config"), "config", "moveit", "kinematics.yaml"]
     )
-
-    # robot_description_planning = {
-    # "robot_description_planning": load_yaml_abs(str(joint_limit_params.perform(context)))
-    # }
 
     capabilities_to_disable = "move_group/MoveGroupCartesianPathService "
     capabilities_to_disable += "move_group/MoveGroupPlanService "
@@ -200,13 +193,13 @@ def launch_setup(context, *args, **kwargs):
         }
     }
     prefix_text = prefix.perform(context)
-    ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
+    ompl_planning_yaml = load_yaml("mr_config", "config/moveit/ompl_planning.yaml")
     ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
     ompl_planning_pipeline_config["move_group"]["planner_configs"]["AdaptPRMkDefault"] \
         ["planner_data_path"] += prefix_text + 'adapt_prm.graph'
 
     # Trajectory Execution Configuration
-    controllers_yaml = load_yaml("ur_moveit_config", "config/controllers.yaml")
+    controllers_yaml = load_yaml("mr_config", "config/moveit/controllers.yaml")
     # the scaled_joint_trajectory_controller does not work on fake hardware
     use_fake_hardware_text = use_fake_hardware.perform(context)
     multi_arm_text = multi_arm.perform(context)
@@ -216,7 +209,7 @@ def launch_setup(context, *args, **kwargs):
         controllers_yaml["scaled_joint_trajectory_controller"]["default"] = False
         controllers_yaml["mr_joint_trajectory_controller"]["default"] = True
         joint_trajectory_controller_to_spawn = "mr_joint_trajectory_controller"
-    elif use_fake_hardware_text == "true" and multi_arm_text == "false":
+    elif use_fake_hardware_text == "true":
         controllers_yaml["scaled_joint_trajectory_controller"]["default"] = False
         controllers_yaml["joint_trajectory_controller"]["default"] = True
         joint_trajectory_controller_to_spawn = "joint_trajectory_controller"
@@ -277,7 +270,7 @@ def launch_setup(context, *args, **kwargs):
 
     # rviz with moveit configuration
     rviz_config = PathJoinSubstitution(
-        [FindPackageShare(moveit_config_package), "rviz", rviz_config_file]
+        [FindPackageShare("mr_config"), "rviz", rviz_config_file]
     )
     rviz_node = Node(
         namespace=ns,
@@ -298,7 +291,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Servo node for realtime control
-    servo_yaml = load_yaml("ur_moveit_config", "config/ur_servo.yaml")
+    servo_yaml = load_yaml("mr_config", "config/moveit/ur_servo.yaml")
     servo_params = {"moveit_servo": servo_yaml}
     servo_node = Node(
         namespace=ns,
@@ -339,42 +332,30 @@ def launch_setup(context, *args, **kwargs):
 
     # ros2_control using FakeSystem as hardware
     ros2_controllers_path = PathJoinSubstitution(
-        [FindPackageShare("ur_robot_driver"), "config", "ur_controllers.yaml"]
+        [FindPackageShare("mr_config"), "config", "universal_robots", "ur_controllers.yaml"]
     )
     ns_text = ns.perform(context)
-    ros2_controllers_path_text = ros2_controllers_path.perform(context)
-    if prefix_text != "":
-        ros2_controllers_yaml = load_yaml("ur_robot_driver", "config/ur_controllers.yaml")
-        jtc = 'joint_trajectory_controller'
-        rp = 'ros__parameters'
-        ros2_controllers_yaml[ns_text] = dict()
-        ros2_controllers_yaml[ns_text][jtc] = \
-            ros2_controllers_yaml[jtc]
-        ros2_controllers_yaml[ns_text]["scaled_" + jtc] = \
-            ros2_controllers_yaml["scaled_" + jtc]
-        ros2_controllers_yaml[ns_text]["mr_" + jtc] = \
-            ros2_controllers_yaml["mr_" + jtc]
-        ros2_controllers_yaml[ns_text][jtc][rp]["joints"] = \
-            [prefix_text + j for j in ros2_controllers_yaml[ns_text][jtc][rp]["joints"]]
-        ros2_controllers_yaml[ns_text]["scaled_" + jtc][rp]["joints"] = \
-            [prefix_text + j for j in ros2_controllers_yaml[ns_text]["scaled_" + jtc][rp]["joints"]]
-        ros2_controllers_yaml[ns_text]["mr_" + jtc][rp]["joints"] = \
-            [prefix_text + j for j in ros2_controllers_yaml[ns_text]["mr_" + jtc][rp]["joints"]]
+    if ns_text != "" or prefix_text != "":
+        ros2_controllers_yaml = load_yaml("mr_config", "config/universal_robots/ur_controllers.yaml")
+        if prefix_text != "":
+            for v in ros2_controllers_yaml.values():
+                if 'joints' not in v['ros__parameters']:
+                    continue
+                if 'constraints' in v['ros__parameters']:
+                    for j_name in v['ros__parameters']["joints"]:
+                        v['ros__parameters']['constraints'][prefix_text + j_name] = \
+                            v['ros__parameters']['constraints'][j_name]
+                        del v['ros__parameters']['constraints'][j_name]
+                v['ros__parameters']["joints"] = [prefix_text + j for j in v['ros__parameters']["joints"]]
+        if ns_text != "":
+            ros2_controllers_yaml = {ns_text: ros2_controllers_yaml}
 
-        ros2_controllers_yaml['/**'] = None
-        del ros2_controllers_yaml['/**']
-        del ros2_controllers_yaml[jtc]
-        del ros2_controllers_yaml["scaled_" + jtc]
-        del ros2_controllers_yaml["mr_" + jtc]
-
-        with open(ros2_controllers_path_text, "r") as file_in:
-            file_in_text = file_in.read()
-            file_out = get_package_share_directory("ur_robot_driver") + \
-                "/config/" + prefix_text + "ur_controllers.yaml"
-            with open(file_out, "w") as file_out:
-                file_out.write(file_in_text + yaml.dump(ros2_controllers_yaml))
+        file_name = ns_text + prefix_text + "ur_controllers.yaml"
+        file_out = get_package_share_directory("mr_config") + "/config/universal_robots/" + file_name
+        with open(file_out, "w") as file_out:
+            file_out.write(yaml.dump(ros2_controllers_yaml))
         ros2_controllers_path = PathJoinSubstitution(
-            [FindPackageShare("ur_robot_driver"), "config", prefix_text + "ur_controllers.yaml"]
+            [FindPackageShare("mr_config"), "config", "universal_robots", file_name]
         )
 
     ros2_control_node = Node(
@@ -486,36 +467,6 @@ def generate_launch_description():
         )
     )
     # General arguments
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "description_package",
-            default_value="mr_description",
-            description="Description package with robot URDF/XACRO files. Usually the argument \
-        is not set, it enables use of a custom description.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "description_file",
-            default_value="ur.urdf.xacro",
-            description="URDF/XACRO description file with the robot.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "moveit_config_package",
-            default_value="ur_moveit_config",
-            description="MoveIt config package with robot SRDF/XACRO files. Usually the argument \
-        is not set, it enables use of a custom moveit config.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "moveit_config_file",
-            default_value="ur.srdf.xacro",
-            description="MoveIt SRDF/XACRO description file with the robot.",
-        )
-    )
     declared_arguments.append(
         DeclareLaunchArgument(
             "warehouse_sqlite_path",

@@ -57,23 +57,23 @@ def launch_setup(context, *args, **kwargs):
 
     for rn in RP: # rn: robot_name
         joint_limit_params = PathJoinSubstitution(
-            [FindPackageShare("mr_description"), "config", RP[rn]['ur_type'], "joint_limits.yaml"]
+            [FindPackageShare("mr_description"), "config", "universal_robots", RP[rn]['ur_type'], "joint_limits.yaml"]
         )
         kinematics_params = PathJoinSubstitution(
-            [FindPackageShare("mr_description"), "config", RP[rn]['ur_type'], "default_kinematics.yaml"]
+            [FindPackageShare("ur_description"), "config", RP[rn]['ur_type'], "default_kinematics.yaml"]
         )
         physical_params = PathJoinSubstitution(
-            [FindPackageShare("mr_description"), "config", RP[rn]['ur_type'], "physical_parameters.yaml"]
+            [FindPackageShare("ur_description"), "config", RP[rn]['ur_type'], "physical_parameters.yaml"]
         )
         visual_params = PathJoinSubstitution(
-            [FindPackageShare("mr_description"), "config", RP[rn]['ur_type'], "visual_parameters.yaml"]
+            [FindPackageShare("ur_description"), "config", RP[rn]['ur_type'], "visual_parameters.yaml"]
         )
 
         robot_description_content = Command(
             [
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
-                PathJoinSubstitution([FindPackageShare("ur_moveit_config"), "urdf", "ur.urdf.xacro"]),
+                PathJoinSubstitution([FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
                 " ",
                 "robot_ip:=xxx.yyy.zzz.www",
                 " ",
@@ -116,7 +116,7 @@ def launch_setup(context, *args, **kwargs):
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
                 PathJoinSubstitution(
-                    [FindPackageShare("ur_moveit_config"), "srdf", "ur.srdf.xacro"]
+                    [FindPackageShare("mr_config"), "srdf", "universal_robots", "ur.srdf.xacro"]
                 ),
                 " ",
                 "name:=ur",
@@ -129,7 +129,7 @@ def launch_setup(context, *args, **kwargs):
         robot_description_semantic = {
             RP[rn]['prefix'] + "description_semantic": robot_description_semantic_content}
         
-        kinematics_yaml = load_yaml("ur_moveit_config", "config/kinematics.yaml")
+        kinematics_yaml = load_yaml("mr_config", "config/moveit/kinematics.yaml")
 
         robot_description_kinematics = {
             RP[rn]['prefix'] + "description_kinematics": \
@@ -140,7 +140,7 @@ def launch_setup(context, *args, **kwargs):
 
         launch_moveit = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                [FindPackageShare("ur_moveit_config"), "/launch", "/ur_moveit.launch.py"]
+                [FindPackageShare("mr_config"), "/launch", "/ur_moveit.launch.py"]
             ),
             launch_arguments={
                 "use_sim_time": use_sim_time,
@@ -157,12 +157,12 @@ def launch_setup(context, *args, **kwargs):
         object_to_start.append(launch_moveit)
         
 
-    ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
+    ompl_planning_yaml = load_yaml("mr_config", "config/moveit/ompl_planning.yaml")
     ompl_planning_pipeline_config = {"move_group": ompl_planning_yaml}
 
     # rviz with moveit configuration
     rviz_config = PathJoinSubstitution(
-        [FindPackageShare("ur_moveit_config"), "rviz", "multi_robot_1.rviz"]
+        [FindPackageShare("mr_config"), "rviz", "multi_robot_1.rviz"]
     )
     warehouse_ros_config = {
         "warehouse_plugin": "warehouse_ros_sqlite::DatabaseConnection",
