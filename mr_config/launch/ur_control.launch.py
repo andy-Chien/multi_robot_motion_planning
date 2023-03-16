@@ -50,13 +50,13 @@ def launch_setup(context, *args, **kwargs):
     ur_type = LaunchConfiguration("ur_type")
     robot_ip = LaunchConfiguration("robot_ip")
     reverse_port = LaunchConfiguration("reverse_port")
+    trajectory_port = LaunchConfiguration("trajectory_port")
     script_sender_port = LaunchConfiguration("script_sender_port")
     script_command_port = LaunchConfiguration("script_command_port")
     safety_limits = LaunchConfiguration("safety_limits")
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
     # General arguments
-    description_file = LaunchConfiguration("description_file")
     prefix = LaunchConfiguration("prefix")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
@@ -100,11 +100,6 @@ def launch_setup(context, *args, **kwargs):
         [FindPackageShare("ur_robot_driver"), "resources", "rtde_output_recipe.txt"]
     )
 
-    reverse_port_text = reverse_port.perform(context)
-    script_sender_port_text = script_sender_port.perform(context)
-    script_command_port_text = script_command_port.perform(context)
-    print('reverse_port = {}, script_sender_port = {}, script_command_port = {}'.format(reverse_port_text, script_sender_port_text, script_command_port_text))
-
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -117,6 +112,9 @@ def launch_setup(context, *args, **kwargs):
             " ",
             "reverse_port:=",
             reverse_port,
+            " ",
+            "trajectory_port:=",
+            trajectory_port,
             " ",
             "script_sender_port:=",
             script_sender_port,
@@ -469,7 +467,14 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "reverse_port",
             default_value="50001",
-            description="Script sender port by which the robot can be reached."
+            description="Reverse port by which the robot can be reached."
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "trajectory_port",
+            default_value="50003",
+            description="Trajectory points command port."
         )
     )
     declared_arguments.append(

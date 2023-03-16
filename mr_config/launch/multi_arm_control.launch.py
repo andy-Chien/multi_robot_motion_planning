@@ -26,8 +26,9 @@ RP = {
     #     'pose_rpy': '"-0.025286 0.0114061 0.0354652"',
     #     'robot_ip': '192.168.1.100',
     #     'reverse_port': '50001',
-    #     'script_sender_port': '50002',
-    #     'script_command_port': '50008'
+    #     'trajectory_port': '50002',
+    #     'script_sender_port': '50003',
+    #     'script_command_port': '50004'
     # },
     'robot_2': {
         'ur_type': 'ur10e',
@@ -36,8 +37,9 @@ RP = {
         'pose_rpy': '"-0.0073885 -0.001825 2.34635345"',
         'robot_ip': '192.168.1.123',
         'reverse_port': '50005',
-        'script_sender_port': '50006',
-        'script_command_port': '50007'
+        'trajectory_port': '50006',
+        'script_sender_port': '50007',
+        'script_command_port': '50008'
     }
 }
 
@@ -56,6 +58,7 @@ def launch_setup(context, *args, **kwargs):
                 "ns": rn,
                 "robot_ip": RP[rn]['robot_ip'],
                 "reverse_port": RP[rn]['reverse_port'],
+                "trajectory_port": RP[rn]['trajectory_port'],
                 "script_sender_port": RP[rn]['script_sender_port'],
                 "script_command_port": RP[rn]['script_command_port'],
                 "prefix": RP[rn]['prefix'],
