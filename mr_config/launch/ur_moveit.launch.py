@@ -189,7 +189,7 @@ def launch_setup(context, *args, **kwargs):
             "planning_plugin": "ompl_interface/OMPLPlannerC",
             "request_adapters": planning_adapters,
             "start_state_max_bounds_error": 0.1,
-            "extra_robot_padding": 0.015,
+            "extra_robot_padding": 0.03,
         }
     }
     prefix_text = prefix.perform(context)

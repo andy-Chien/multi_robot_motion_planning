@@ -19,17 +19,17 @@ from ur_moveit_config.launch_common import load_yaml
 #  '"-0.58768 0.26583 -014994"'
 #  [ -0.0022718, 0.0030527, 0.92198, 0.3872188 ] xyzw
 RP = {
-    # 'robot_1': {
-    #     'ur_type': 'ur5',
-    #     'prefix': 'robot_1_',
-    #     'pose_xyz': '"0.18610747 0.79149527 -0.09877093"',
-    #     'pose_rpy': '"-0.025286 0.0114061 0.0354652"',
-    #     'robot_ip': '192.168.1.100',
-    #     'reverse_port': '50001',
-    #     'trajectory_port': '50002',
-    #     'script_sender_port': '50003',
-    #     'script_command_port': '50004'
-    # },
+    'robot_1': {
+        'ur_type': 'ur5',
+        'prefix': 'robot_1_',
+        'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
+        'pose_rpy': '"-0.025286 0.0114061 0.0354652"',
+        'robot_ip': '192.168.1.100',
+        'reverse_port': '50001',
+        'trajectory_port': '50003',
+        'script_sender_port': '50002',
+        'script_command_port': '50004'
+    },
     'robot_2': {
         'ur_type': 'ur10e',
         'prefix': 'robot_2_',
@@ -37,14 +37,20 @@ RP = {
         'pose_rpy': '"-0.0073885 -0.001825 2.34635345"',
         'robot_ip': '192.168.1.123',
         'reverse_port': '50005',
-        'trajectory_port': '50006',
-        'script_sender_port': '50007',
+        'trajectory_port': '50007',
+        'script_sender_port': '50006',
         'script_command_port': '50008'
     }
 }
 
 
 def launch_setup(context, *args, **kwargs):
+    launch_robot_1 = LaunchConfiguration("robot_1")
+    launch_robot_2 = LaunchConfiguration("robot_2")
+    if launch_robot_1.perform(context) == "false":
+        del RP['robot_1']
+    if launch_robot_2.perform(context) == "false":
+        del RP['robot_2']
     object_to_start = []
     launch_delay = 0.0
     for rn in RP: # rn: robot_name
@@ -75,8 +81,8 @@ def launch_setup(context, *args, **kwargs):
             period=launch_delay,
             actions=[launch_ur_control]
         ))
-        launch_delay += 5
-
+        launch_delay += 8
+    print(object_to_start)
     return object_to_start
 
 def generate_launch_description():
