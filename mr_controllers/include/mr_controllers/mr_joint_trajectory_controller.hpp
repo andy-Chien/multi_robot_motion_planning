@@ -37,12 +37,7 @@
 #ifndef MR_CONTROLLERS__SCALED_JOINT_TRAJECTORY_CONTROLLER_HPP_
 #define MR_CONTROLLERS__SCALED_JOINT_TRAJECTORY_CONTROLLER_HPP_
 
-// #include "angles/angles.h"
-#include "joint_trajectory_controller/joint_trajectory_controller.hpp"
-// #include "joint_trajectory_controller/trajectory.hpp"
-// #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
-// #include "rclcpp/time.hpp"
-// #include "rclcpp/duration.hpp"
+#include <joint_trajectory_controller/joint_trajectory_controller.hpp>
 
 #include "mr_msgs/srv/set_trajectory_state.hpp"
 
@@ -67,6 +62,8 @@ protected:
     const std::shared_ptr<rclcpp_action::ServerGoalHandle<FollowJTrajAction>> goal_handle);
   void goal_accepted_callback(
     std::shared_ptr<rclcpp_action::ServerGoalHandle<FollowJTrajAction>> goal_handle);
+  void set_trajectory_state(
+    std::shared_ptr<mr_msgs::srv::SetTrajectoryState::Request> req);
   
 private:
   std::string robot_name_;
