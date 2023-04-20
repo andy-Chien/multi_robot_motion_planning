@@ -16,9 +16,7 @@
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>ros2_controllers</exec_depend>
   <exec_depend>ur_description</exec_depend>
-  <exec_depend>swerve_drive_description</exec_depend>
   <exec_depend>gazebo_ros_pkgs</exec_depend>
-  <!-- <exec_depend>gazebo</exec_depend> -->
   <exec_depend>rviz2</exec_depend>
   <exec_depend>urdf</exec_depend>
   <exec_depend>xacro</exec_depend>
