@@ -67,6 +67,18 @@ planner_configs:
     enable_exploration: true
     multi_query_planning_enabled: true
 
+  AdaptLazyPRMkDefault: 
+    type: geometric::AdaptLazyPRM
+    optimization_objective: PathLengthUtilizationOptimizationObjective
+    optimization_threshold: 1.5
+    distance_weight: 0.99
+    max_cost: 3
+    store_planner_data: true
+    load_planner_data: true
+    planner_data_path: /home/andy/packing_ws/src/multi_robot_packing_task/multi_robot_motion_planning/moveit_plugins/motion_plan/cfg/
+    enable_exploration: true
+    multi_query_planning_enabled: true
+
 ur_manipulator:
   planner_configs:
     - SBLkConfigDefault
@@ -82,6 +94,7 @@ ur_manipulator:
     - PRMstarkConfigDefault
     - LazyPRMkDefault
     - AdaptPRMkDefault
+    - AdaptLazyPRMkDefault
   ##Note: commenting the following line lets moveit chose RRTConnect as default planner rather than LBKPIECE
   #projection_evaluator: joints(shoulder_pan_joint,shoulder_lift_joint)
   longest_valid_segment_fraction: 0.01

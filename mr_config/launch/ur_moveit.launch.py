@@ -197,6 +197,8 @@ def launch_setup(context, *args, **kwargs):
     ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
     ompl_planning_pipeline_config["move_group"]["planner_configs"]["AdaptPRMkDefault"] \
         ["planner_data_path"] += prefix_text + 'adapt_prm.graph'
+    ompl_planning_pipeline_config["move_group"]["planner_configs"]["AdaptLazyPRMkDefault"] \
+        ["planner_data_path"] += prefix_text + 'adapt_lazy_prm.graph'
 
     # Trajectory Execution Configuration
     controllers_yaml = load_yaml("mr_config", "config/moveit/controllers.yaml")
