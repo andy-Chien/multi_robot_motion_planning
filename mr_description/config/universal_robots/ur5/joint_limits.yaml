@@ -15,11 +15,11 @@ joint_limits:
     has_velocity_limits: true
     has_acceleration_limits: true
     max_effort: 150.0
-    # max_position: !degrees  190.0
-    max_position: !degrees  55.0
+    max_position: !degrees  190.0
+    min_position: !degrees -190.0
+    # max_position: !degrees  55.0   # ntu real robot test
+    # min_position: !degrees -130.0  # ntu real robot test
     max_velocity: !degrees  180.0
-    # min_position: !degrees -190.0
-    min_position: !degrees -130.0
     max_acceleration: !degrees 540
   shoulder_lift_joint:
     # acceleration limits are not publicly available
@@ -29,8 +29,8 @@ joint_limits:
     has_acceleration_limits: true
     max_effort: 150.0
     max_position: !degrees  -35.0
-    max_velocity: !degrees  180.0
     min_position: !degrees -190.0
+    max_velocity: !degrees  180.0
     max_acceleration: !degrees 540
   elbow_joint:
     # acceleration limits are not publicly available
@@ -50,8 +50,8 @@ joint_limits:
     # Refer to https://github.com/ros-industrial/universal_robot/issues/265 for
     # more information.
     max_position: !degrees  10.0
-    max_velocity: !degrees  180.0
     min_position: !degrees -180.0
+    max_velocity: !degrees  180.0
     max_acceleration: !degrees 540
   wrist_1_joint:
     # acceleration limits are not publicly available
@@ -61,8 +61,8 @@ joint_limits:
     has_acceleration_limits: true
     max_effort: 28.0
     max_position: !degrees  10.0
-    max_velocity: !degrees  180.0
     min_position: !degrees -145.0
+    max_velocity: !degrees  180.0
     max_acceleration: !degrees 540
   wrist_2_joint:
     # acceleration limits are not publicly available
@@ -72,8 +72,8 @@ joint_limits:
     has_acceleration_limits: true
     max_effort: 28.0
     max_position: !degrees  145.0
-    max_velocity: !degrees  180.0
     min_position: !degrees  -10.0
+    max_velocity: !degrees  180.0
     max_acceleration: !degrees 540
   wrist_3_joint:
     # acceleration limits are not publicly available
@@ -83,8 +83,8 @@ joint_limits:
     has_acceleration_limits: true
     max_effort: 28.0
     max_position: !degrees  190.0
-    max_velocity: !degrees  180.0
     min_position: !degrees -190.0
+    max_velocity: !degrees  180.0
     max_acceleration: !degrees 540
 
 

@@ -194,11 +194,17 @@ def launch_setup(context, *args, **kwargs):
     }
     prefix_text = prefix.perform(context)
     ompl_planning_yaml = load_yaml("mr_config", "config/moveit/ompl_planning.yaml")
-    ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
-    ompl_planning_pipeline_config["move_group"]["planner_configs"]["AdaptPRMkDefault"] \
+    ompl_planning_yaml["planner_configs"]["AdaptPRMkDefault"] \
         ["planner_data_path"] += prefix_text + 'adapt_prm.graph'
-    ompl_planning_pipeline_config["move_group"]["planner_configs"]["AdaptLazyPRMkDefault"] \
+    ompl_planning_yaml["planner_configs"]["AdaptLazyPRMkDefault"] \
         ["planner_data_path"] += prefix_text + 'adapt_lazy_prm.graph'
+    if 'projection_evaluator_joints' in ompl_planning_yaml["ur_manipulator"].keys():
+        pej = ompl_planning_yaml["ur_manipulator"]["projection_evaluator_joints"]
+        pe = 'joints('
+        for j in pej:
+            pe += prefix_text + j + ','
+        ompl_planning_yaml["ur_manipulator"]['projection_evaluator'] = pe[:-1] + ')'
+    ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
 
     # Trajectory Execution Configuration
     controllers_yaml = load_yaml("mr_config", "config/moveit/controllers.yaml")
