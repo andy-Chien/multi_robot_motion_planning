@@ -53,7 +53,7 @@ planner_configs:
   PRMstarkConfigDefault:
     type: geometric::PRMstar
   LazyPRMkDefault:
-    type: geometric::LazyPRM
+    type: geometric::LazyPRMTmp
     range: 3.0
   FMT:
     type: geometric::FMT
@@ -137,10 +137,10 @@ planner_configs:
     type: geometric::AdaptLazyPRM
     optimization_objective: PathLengthUtilizationOptimizationObjective
     optimization_threshold: 1.5
-    distance_weight: 0.99
-    max_cost: 3
-    store_planner_data: true
-    load_planner_data: true
+    distance_weight: 0.9
+    max_cost: 30
+    store_planner_data: false
+    load_planner_data: false
     planner_data_path: /home/andy/packing_ws/src/multi_robot_packing_task/multi_robot_motion_planning/moveit_plugins/motion_plan/cfg/
     enable_exploration: true
     multi_query_planning_enabled: true
