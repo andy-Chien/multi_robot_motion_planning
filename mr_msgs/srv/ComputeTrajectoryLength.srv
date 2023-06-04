@@ -5,3 +5,4 @@ trajectory_msgs/JointTrajectory trajectory
 
 float64 joint_traj_length
 float64 tool_traj_length
+float64 quat_traj_length
