@@ -176,8 +176,10 @@ def launch_setup(context, *args, **kwargs):
         "capabilities": capabilities_to_enable
     }
 
-    planning_adapters = "planning_adapter/AddTrajectoryObstacles "
-    planning_adapters += "default_planner_request_adapters/AddTimeOptimalParameterization "
+    multi_arm_text = multi_arm.perform(context)
+    planning_adapters = ""
+    if multi_arm_text == "true":
+        planning_adapters += "default_planner_request_adapters/AddTimeOptimalParameterization "
     planning_adapters += "default_planner_request_adapters/FixWorkspaceBounds "
     planning_adapters += "default_planner_request_adapters/FixStartStateBounds "
     planning_adapters += "default_planner_request_adapters/FixStartStateCollision "
@@ -210,7 +212,6 @@ def launch_setup(context, *args, **kwargs):
     controllers_yaml = load_yaml("mr_config", "config/moveit/controllers.yaml")
     # the scaled_joint_trajectory_controller does not work on fake hardware
     use_fake_hardware_text = use_fake_hardware.perform(context)
-    multi_arm_text = multi_arm.perform(context)
 
     joint_trajectory_controller_to_spawn = "scaled_joint_trajectory_controller"
     if multi_arm_text == "true":
