@@ -179,7 +179,8 @@ def launch_setup(context, *args, **kwargs):
     multi_arm_text = multi_arm.perform(context)
     planning_adapters = ""
     if multi_arm_text == "true":
-        planning_adapters += "default_planner_request_adapters/AddTimeOptimalParameterization "
+        planning_adapters = "planning_adapter/AddTrajectoryObstacles "
+    planning_adapters += "default_planner_request_adapters/AddTimeOptimalParameterization "
     planning_adapters += "default_planner_request_adapters/FixWorkspaceBounds "
     planning_adapters += "default_planner_request_adapters/FixStartStateBounds "
     planning_adapters += "default_planner_request_adapters/FixStartStateCollision "
