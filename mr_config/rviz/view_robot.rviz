@@ -79,11 +79,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         flange:
           Alpha: 1
           Show Axes: false
@@ -97,84 +92,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        mobile_base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        mobile_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        mobile_lf_swerve_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_lf_wheel_arrow_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_lf_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_lidar_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_lr_swerve_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_lr_wheel_arrow_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_lr_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_rf_swerve_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_rf_wheel_arrow_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_rf_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_rr_swerve_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_rr_wheel_arrow_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        mobile_rr_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         shoulder_link:
           Alpha: 1
           Show Axes: false
@@ -184,11 +101,24 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        tool_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tool_tip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         upper_arm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         wrist_1_link:
           Alpha: 1
           Show Axes: false
@@ -215,7 +145,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: map
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -258,7 +188,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10
+      Distance: 6.814720153808594
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -273,10 +203,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7803982496261597
+      Pitch: 0.7403982877731323
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.8653951287269592
+      Yaw: 0.3503951132297516
     Saved: ~
 Window Geometry:
   Displays:
