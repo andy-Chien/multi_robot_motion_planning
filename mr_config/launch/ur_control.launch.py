@@ -76,13 +76,14 @@ def launch_setup(context, *args, **kwargs):
     pose_xyz = LaunchConfiguration("pose_xyz")
     pose_rpy = LaunchConfiguration("pose_rpy")
     multi_arm = LaunchConfiguration("multi_arm")
+    calib_file = LaunchConfiguration("calib_file")
 
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare("mr_description"), "config", "universal_robots", ur_type, "joint_limits.yaml"]
     )
     kinematics_params = PathJoinSubstitution(
-        [FindPackageShare("ur_description"), "config", ur_type, "default_kinematics.yaml"]
+        [FindPackageShare("mr_description"), "config/universal_robots", ur_type, calib_file]
     )
     physical_params = PathJoinSubstitution(
         [FindPackageShare("ur_description"), "config", ur_type, "physical_parameters.yaml"]
@@ -671,6 +672,13 @@ def generate_launch_description():
             "pose_rpy", 
             default_value='"0 0 0"', 
             description="orientation of robot in world",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "calib_file",
+            default_value="defalt_kinematics.yaml",
+            description="YAML file with the controllers configuration.",
         )
     )
 

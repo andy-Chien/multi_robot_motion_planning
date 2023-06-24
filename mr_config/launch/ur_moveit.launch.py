@@ -63,12 +63,13 @@ def launch_setup(context, *args, **kwargs):
     pose_xyz = LaunchConfiguration("pose_xyz")
     pose_rpy = LaunchConfiguration("pose_rpy")
     multi_arm = LaunchConfiguration("multi_arm")
+    calib_file = LaunchConfiguration("calib_file")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare("mr_description"), "config", "universal_robots", ur_type, "joint_limits.yaml"]
     )
     kinematics_params = PathJoinSubstitution(
-        [FindPackageShare("ur_description"), "config", ur_type, "default_kinematics.yaml"]
+        [FindPackageShare("mr_description"), "config/universal_robots", ur_type, calib_file]
     )
     physical_params = PathJoinSubstitution(
         [FindPackageShare("ur_description"), "config", ur_type, "physical_parameters.yaml"]
@@ -326,22 +327,21 @@ def launch_setup(context, *args, **kwargs):
         arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "world_marker"],
     )
 
-    base_static_tf = Node(
-        namespace=ns,
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        name="static_transform_publisher",
-        output="log",
-        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "base_link"],
-    )
-
     camera_static_tf = Node(
         namespace=ns,
         package="tf2_ros",
         executable="static_transform_publisher",
         name="static_transform_publisher",
         output="log",
-        arguments=["-0.08234951503935917", "0.011274879874706456", "-0.002729553310829319", "0.245143656502603", "0.0788003994765166", "-0.379706685928911", "-0.888548207684737", "tool0", "camera_link"],
+        arguments=["-0.03433662029772863", 
+                    "-0.0033561763879540957",
+                    "0.03618988925330751", 
+                    "0.257812563704949", 
+                    "0.113033449678485", 
+                    "-0.382062384987442", 
+                    "-0.880218413365325", 
+                    "tool0", 
+                    "camera_link"],
     )
 
     # Publish TF
@@ -421,7 +421,6 @@ def launch_setup(context, *args, **kwargs):
 
     nodes_to_start = [
         marker_static_tf,
-        base_static_tf,
         camera_static_tf,
         robot_state_publisher,
         ros2_control_node,
@@ -553,6 +552,13 @@ def generate_launch_description():
             "pose_rpy", 
             default_value='"0 0 0"', 
             description="orientation of robot in world",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "calib_file",
+            default_value="defalt_kinematics.yaml",
+            description="YAML file with the controllers configuration.",
         )
     )
 
