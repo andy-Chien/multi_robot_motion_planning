@@ -318,47 +318,14 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Static TF
-    # marker_static_tf = Node(
-    #     namespace=ns,
-    #     package="tf2_ros",
-    #     executable="static_transform_publisher",
-    #     name="static_transform_publisher",
-    #     output="log",
-    #     arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "world_marker"],
-    # )
-
-    # camera_static_tf = Node(
-    #     namespace=ns,
-    #     package="tf2_ros",
-    #     executable="static_transform_publisher",
-    #     name="static_transform_publisher",
-    #     output="log",
-    #     arguments=["-0.03433662029772863", 
-    #                 "-0.0033561763879540957",
-    #                 "0.03618988925330751", 
-    #                 "0.257812563704949", 
-    #                 "0.113033449678485", 
-    #                 "-0.382062384987442", 
-    #                 "-0.880218413365325", 
-    #                 "tool0", 
-    #                 "camera_link"],
-    # )
-    # camera_static_tf = Node(
-    #     namespace=ns,
-    #     package="tf2_ros",
-    #     executable="static_transform_publisher",
-    #     name="static_transform_publisher",
-    #     output="log",
-    #     arguments=["-0.23927503063158623", 
-    #                "0.13672661802295893",
-    #                "-0.07798876382208922",
-    #                " -0.3571993783034698",
-    #                " -0.34977644374826966",
-    #                " 0.6006152424568505", 
-    #                " 0.6239602343634785", 
-    #                "base_link", 
-    #                "camera_link"],
-    # )
+    marker_static_tf = Node(
+        namespace=ns,
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_transform_publisher",
+        output="log",
+        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "world_marker"],
+    )
 
     camera_static_tf = Node(
         namespace=ns,
@@ -366,16 +333,17 @@ def launch_setup(context, *args, **kwargs):
         executable="static_transform_publisher",
         name="static_transform_publisher",
         output="log",
-        arguments=["0.2920878057867339", 
-                   "-0.15407630829656666",
-                   "-0.04049023141189538",
-                   "-0.344249054489911",
-                   "0.354365325505531",
-                   "-0.616435762119046", 
-                   "0.6131270306738", 
-                   "base_link", 
-                   "camera_link"],
+        arguments=["-0.03433662029772863", 
+                    "-0.0033561763879540957",
+                    "0.03618988925330751", 
+                    "0.257812563704949", 
+                    "0.113033449678485", 
+                    "-0.382062384987442", 
+                    "-0.880218413365325", 
+                    "tool0", 
+                    "camera_link"],
     )
+
     # Publish TF
     robot_state_publisher = Node(
         namespace=ns,
@@ -452,7 +420,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     nodes_to_start = [
-        # marker_static_tf,
+        marker_static_tf,
         camera_static_tf,
         robot_state_publisher,
         ros2_control_node,

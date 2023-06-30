@@ -677,7 +677,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "calib_file",
-            default_value="defalt_kinematics.yaml",
+            default_value="default_kinematics.yaml",
             description="YAML file with the controllers configuration.",
         )
     )
