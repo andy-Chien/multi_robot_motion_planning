@@ -38,6 +38,17 @@ def launch_setup(context, *args, **kwargs):
     use_sim_time = LaunchConfiguration("use_sim_time")
     launch_robot_1 = LaunchConfiguration("robot_1")
     launch_robot_2 = LaunchConfiguration("robot_2")
+    tool_changeable = LaunchConfiguration("tool_changeable")
+    urdf_file = "ur.urdf.xacro"
+    srdf_file = "ur.srdf.xacro"
+
+    if tool_changeable.perform(context) == "false":
+        urdf_file = "ur_tool_changeable.urdf.xacro"
+        srdf_file = "ur_tool_changeable.srdf.xacro"
+    if launch_robot_1.perform(context) == "false":
+        del RP['robot_1']
+    if launch_robot_2.perform(context) == "false":
+        del RP['robot_2']
 
     rviz_params = []
     object_to_start = []
@@ -60,7 +71,7 @@ def launch_setup(context, *args, **kwargs):
             [
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
-                PathJoinSubstitution([FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
+                PathJoinSubstitution([FindPackageShare("mr_description"), "urdf", "universal_robots", urdf_file]),
                 " ",
                 "robot_ip:=xxx.yyy.zzz.www",
                 " ",
@@ -103,7 +114,7 @@ def launch_setup(context, *args, **kwargs):
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
                 PathJoinSubstitution(
-                    [FindPackageShare("mr_config"), "srdf", "universal_robots", "ur.srdf.xacro"]
+                    [FindPackageShare("mr_config"), "srdf", "universal_robots", srdf_file]
                 ),
                 " ",
                 "name:=ur",
@@ -141,6 +152,8 @@ def launch_setup(context, *args, **kwargs):
                 "launch_rviz": "false",
                 "use_fake_hardware": "false",
                 "use_fake_controller": "false",
+                "description_file": urdf_file,
+                "srdf_file": srdf_file
             }.items(),
         )
         object_to_start.append(launch_moveit)
@@ -194,6 +207,13 @@ def generate_launch_description():
             "use_sim_time",
             default_value="false",
             description="Using sim time or not",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_changeable", 
+            default_value="false", 
+            description="Use tool changeable setting?",
         )
     )
 

@@ -8,6 +8,6 @@
 
   <xacro:include filename="$(find mr_config)/srdf/universal_robots/ur_macro.srdf.xacro"/>
 
-  <xacro:ur_srdf name="$(arg name)" prefix="$(arg prefix)" tool_tip="tool_tip"/>
+  <xacro:ur_srdf name="$(arg name)" prefix="$(arg prefix)" tool_tip="suction_tool_tip"/>
 
 </robot>

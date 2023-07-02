@@ -20,7 +20,7 @@ from ur_moveit_config.launch_common import load_yaml
 #  [ -0.0022718, 0.0030527, 0.92198, 0.3872188 ] xyzw
 RP = {
     'robot_1': {
-        'ur_type': 'ur5',
+        'ur_type': 'ur5e',
         'prefix': 'robot_1_',
         'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
         'pose_rpy': '"-0.025286 0.0114061 0.0354652"',
@@ -31,7 +31,7 @@ RP = {
         'script_command_port': '50004'
     },
     'robot_2': {
-        'ur_type': 'ur10e',
+        'ur_type': 'ur5',
         'prefix': 'robot_2_',
         'pose_xyz': '"0.2218704 -0.60678568 -0.1450561"',
         'pose_rpy': '"-0.0073885 -0.001825 2.34635345"',
@@ -47,6 +47,12 @@ RP = {
 def launch_setup(context, *args, **kwargs):
     launch_robot_1 = LaunchConfiguration("robot_1")
     launch_robot_2 = LaunchConfiguration("robot_2")
+    tool_changeable = LaunchConfiguration("tool_changeable")
+
+    urdf_file = "ur.urdf.xacro"
+
+    if tool_changeable.perform(context) == "false":
+        urdf_file = "ur_tool_changeable.urdf.xacro"
     if launch_robot_1.perform(context) == "false":
         del RP['robot_1']
     if launch_robot_2.perform(context) == "false":
@@ -73,7 +79,8 @@ def launch_setup(context, *args, **kwargs):
                 "pose_rpy": RP[rn]['pose_rpy'],
                 "multi_arm": "true",
                 "launch_rviz": "false",
-                "initial_joint_controller": "mr_joint_trajectory_controller"
+                "initial_joint_controller": "mr_joint_trajectory_controller",
+                "description_file": urdf_file
             }.items(),
         )
         
@@ -99,6 +106,13 @@ def generate_launch_description():
             "robot_2",
             default_value="false",
             description="Launch robot 2 or not",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_changeable", 
+            default_value="false", 
+            description="Use tool changeable setting?",
         )
     )
 

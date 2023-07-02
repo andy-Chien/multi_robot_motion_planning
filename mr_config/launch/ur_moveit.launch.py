@@ -64,6 +64,8 @@ def launch_setup(context, *args, **kwargs):
     pose_rpy = LaunchConfiguration("pose_rpy")
     multi_arm = LaunchConfiguration("multi_arm")
     calib_file = LaunchConfiguration("calib_file")
+    description_file = LaunchConfiguration("description_file")
+    srdf_file = LaunchConfiguration("srdf_file")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare("mr_description"), "config", "universal_robots", ur_type, "joint_limits.yaml"]
@@ -78,12 +80,14 @@ def launch_setup(context, *args, **kwargs):
         [FindPackageShare("ur_description"), "config", ur_type, "visual_parameters.yaml"]
     )
 
+    print('description_file = {}'.format(description_file.perform(context)))
+
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
+                [FindPackageShare("mr_description"), "urdf", "universal_robots", description_file]),
             " ",
             "robot_ip:=xxx.yyy.zzz.www",
             " ",
@@ -142,7 +146,7 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("mr_config"), "srdf", "universal_robots", "ur.srdf.xacro"]
+                [FindPackageShare("mr_config"), "srdf", "universal_robots", srdf_file]
             ),
             " ",
             "name:=",
@@ -453,7 +457,7 @@ def launch_setup(context, *args, **kwargs):
 
     nodes_to_start = [
         # marker_static_tf,
-        camera_static_tf,
+        # camera_static_tf,
         robot_state_publisher,
         ros2_control_node,
         joint_state_broadcaster_spawner,
@@ -591,6 +595,20 @@ def generate_launch_description():
             "calib_file",
             default_value="default_kinematics.yaml",
             description="YAML file with the controllers configuration.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "description_file",
+            default_value="ur.urdf.xacro",
+            description="URDF/XACRO description file with the robot.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "srdf_file",
+            default_value="ur.srdf.xacro",
+            description="URDF/XACRO description file with the robot.",
         )
     )
 

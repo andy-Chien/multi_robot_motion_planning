@@ -17,13 +17,13 @@ from ur_moveit_config.launch_common import load_yaml
 # rviz random test
 RP = {
     'robot_1': {
-        'ur_type': 'ur10e',
+        'ur_type': 'ur5e',
         'prefix': 'robot_1_',
         'pose_xyz': '"0 -0.7 0"',
         'pose_rpy': '"0 0 1.5707963"'
     },
     'robot_2': {
-        'ur_type': 'ur10e',
+        'ur_type': 'ur5',
         'prefix': 'robot_2_',
         'pose_xyz': '"0 0.7 0"',
         'pose_rpy': '"0 0 -1.5707963"'
@@ -57,11 +57,26 @@ def launch_setup(context, *args, **kwargs):
     use_sim_time = LaunchConfiguration("use_sim_time")
     launch_robot_1 = LaunchConfiguration("robot_1")
     launch_robot_2 = LaunchConfiguration("robot_2")
+    tool_changeable = LaunchConfiguration("tool_changeable")
+    urdf_file = "ur.urdf.xacro"
+    srdf_file = "ur.srdf.xacro"
+    rviz_file = "multi_robot_1.rviz"
+
+    if tool_changeable.perform(context) == "false":
+        urdf_file = "ur_tool_changeable.urdf.xacro"
+        srdf_file = "ur_tool_changeable.srdf.xacro"
+    if launch_robot_1.perform(context) == "false":
+        del RP['robot_1']
+        rviz_file = "robot_2.rviz"
+    if launch_robot_2.perform(context) == "false":
+        del RP['robot_2']
+        rviz_file = "robot_1.rviz"
 
     rviz_params = []
     object_to_start = []
 
     for rn in RP: # rn: robot_name
+        print('RPRPRPRPRPRPRPRP = {}, rviz_file = {}'.format(RP, rviz_file))
         joint_limit_params = PathJoinSubstitution(
             [FindPackageShare("mr_description"), "config", "universal_robots", RP[rn]['ur_type'], "joint_limits.yaml"]
         )
@@ -79,7 +94,7 @@ def launch_setup(context, *args, **kwargs):
             [
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
-                PathJoinSubstitution([FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
+                PathJoinSubstitution([FindPackageShare("mr_description"), "urdf", "universal_robots", urdf_file]),
                 " ",
                 "robot_ip:=xxx.yyy.zzz.www",
                 " ",
@@ -122,7 +137,7 @@ def launch_setup(context, *args, **kwargs):
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
                 PathJoinSubstitution(
-                    [FindPackageShare("mr_config"), "srdf", "universal_robots", "ur.srdf.xacro"]
+                    [FindPackageShare("mr_config"), "srdf", "universal_robots", srdf_file]
                 ),
                 " ",
                 "name:=ur",
@@ -157,7 +172,9 @@ def launch_setup(context, *args, **kwargs):
                 "pose_xyz": RP[rn]['pose_xyz'],
                 "pose_rpy": RP[rn]['pose_rpy'],
                 "multi_arm": "true",
-                "launch_rviz": "false"
+                "launch_rviz": "false",
+                "description_file": urdf_file,
+                "srdf_file": srdf_file,
             }.items(),
         )
         object_to_start.append(launch_moveit)
@@ -168,7 +185,7 @@ def launch_setup(context, *args, **kwargs):
 
     # rviz with moveit configuration
     rviz_config = PathJoinSubstitution(
-        [FindPackageShare("mr_config"), "rviz", "multi_robot_1.rviz"]
+        [FindPackageShare("mr_config"), "rviz", rviz_file]
     )
     warehouse_ros_config = {
         "warehouse_plugin": "warehouse_ros_sqlite::DatabaseConnection",
@@ -187,6 +204,8 @@ def launch_setup(context, *args, **kwargs):
         parameters=rviz_params,
     )
     object_to_start.append(rviz_node)
+
+
 
     return object_to_start
 
@@ -211,6 +230,13 @@ def generate_launch_description():
             "use_sim_time",
             default_value="false",
             description="Using sim time or not",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_changeable", 
+            default_value="false", 
+            description="Use tool changeable setting?",
         )
     )
 

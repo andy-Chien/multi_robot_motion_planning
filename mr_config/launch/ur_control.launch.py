@@ -77,7 +77,7 @@ def launch_setup(context, *args, **kwargs):
     pose_rpy = LaunchConfiguration("pose_rpy")
     multi_arm = LaunchConfiguration("multi_arm")
     calib_file = LaunchConfiguration("calib_file")
-
+    description_file = LaunchConfiguration("description_file")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare("mr_description"), "config", "universal_robots", ur_type, "joint_limits.yaml"]
@@ -106,7 +106,7 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("mr_description"), "urdf", "universal_robots", "ur.urdf.xacro"]),
+                [FindPackageShare("mr_description"), "urdf", "universal_robots", description_file]),
             " ",
             "robot_ip:=",
             robot_ip,
