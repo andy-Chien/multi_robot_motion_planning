@@ -281,6 +281,7 @@ def launch_setup(context, *args, **kwargs):
             {"use_sim_time": use_sim_time},
             warehouse_ros_config,
         ],
+        # arguments=['--ros-args', '--log-level', "debug"]
     )
 
     # rviz with moveit configuration

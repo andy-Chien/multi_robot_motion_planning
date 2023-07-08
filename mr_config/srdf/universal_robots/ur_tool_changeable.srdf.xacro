@@ -10,4 +10,14 @@
 
   <xacro:ur_srdf name="$(arg name)" prefix="$(arg prefix)" tool_tip="suction_tool_tip"/>
 
+  <disable_collisions link1="$(arg prefix)suction_tool_tip" link2="picking_box" reason="Never" />
+  <disable_collisions link1="$(arg prefix)pj_tool_tip" link2="picking_box" reason="Never" />
+  <disable_collisions link1="$(arg prefix)suction_tool_tip" link2="picked_obj" reason="Never" />
+  <disable_collisions link1="$(arg prefix)pj_tool_tip" link2="picked_obj" reason="Never" />
+  <disable_collisions link1="gripper_with_suction" link2="picking_box" reason="Never" />
+  <disable_collisions link1="gripper_no_suction" link2="picking_box" reason="Never" />
+  <disable_collisions link1="gripper_with_suction" link2="picked_obj" reason="Never" />
+  <disable_collisions link1="gripper_no_suction" link2="picked_obj" reason="Never" />
+  
+
 </robot>
