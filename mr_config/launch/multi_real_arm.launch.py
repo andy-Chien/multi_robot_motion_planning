@@ -41,14 +41,19 @@ def launch_setup(context, *args, **kwargs):
     tool_changeable = LaunchConfiguration("tool_changeable")
     urdf_file = "ur.urdf.xacro"
     srdf_file = "ur.srdf.xacro"
+    rviz_file = "multi_robot_1.rviz"
 
-    if tool_changeable.perform(context) == "false":
+
+    if tool_changeable.perform(context) == "true":
         urdf_file = "ur_tool_changeable.urdf.xacro"
         srdf_file = "ur_tool_changeable.srdf.xacro"
     if launch_robot_1.perform(context) == "false":
         del RP['robot_1']
+        rviz_file = "robot_2.rviz"
     if launch_robot_2.perform(context) == "false":
         del RP['robot_2']
+        rviz_file = "robot_1.rviz"
+
 
     rviz_params = []
     object_to_start = []
@@ -164,7 +169,7 @@ def launch_setup(context, *args, **kwargs):
 
     # rviz with moveit configuration
     rviz_config = PathJoinSubstitution(
-        [FindPackageShare("mr_config"), "rviz", "multi_robot_1.rviz"]
+        [FindPackageShare("mr_config"), "rviz", rviz_file]
     )
     warehouse_ros_config = {
         "warehouse_plugin": "warehouse_ros_sqlite::DatabaseConnection",

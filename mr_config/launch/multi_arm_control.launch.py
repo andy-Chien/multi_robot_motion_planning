@@ -51,7 +51,7 @@ def launch_setup(context, *args, **kwargs):
 
     urdf_file = "ur.urdf.xacro"
 
-    if tool_changeable.perform(context) == "false":
+    if tool_changeable.perform(context) == "true":
         urdf_file = "ur_tool_changeable.urdf.xacro"
     if launch_robot_1.perform(context) == "false":
         del RP['robot_1']

@@ -62,7 +62,7 @@ def launch_setup(context, *args, **kwargs):
     srdf_file = "ur.srdf.xacro"
     rviz_file = "multi_robot_1.rviz"
 
-    if tool_changeable.perform(context) == "false":
+    if tool_changeable.perform(context) == "true":
         urdf_file = "ur_tool_changeable.urdf.xacro"
         srdf_file = "ur_tool_changeable.srdf.xacro"
     if launch_robot_1.perform(context) == "false":
