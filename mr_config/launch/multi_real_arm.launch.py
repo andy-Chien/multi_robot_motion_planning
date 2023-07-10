@@ -18,18 +18,32 @@ from ur_moveit_config.launch_common import load_yaml
 #  [ -0.0125393, 0.0059258, 0.0176579, 0.9997479 ] xyzw
 #  '"-0.58768 0.26583 -014994"'
 #  [ -0.0022718, 0.0030527, 0.92198, 0.3872188 ] xyzw
+# RP = {
+#     'robot_1': {
+#         'ur_type': 'ur5',
+#         'prefix': 'robot_1_',
+#         'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
+#         'pose_rpy': '"-0.025286 0.0114061 0.0354652"'
+#     },
+#     'robot_2': {
+#         'ur_type': 'ur10e',
+#         'prefix': 'robot_2_',
+#         'pose_xyz': '"0.2218704 -0.60678568 -0.1450561"',
+#         'pose_rpy': '"-0.0073885 -0.001825 2.34635345"' 
+#     }
+# }
 RP = {
     'robot_1': {
-        'ur_type': 'ur5',
+        'ur_type': 'ur5e',
         'prefix': 'robot_1_',
-        'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
-        'pose_rpy': '"-0.025286 0.0114061 0.0354652"'
+        'pose_xyz': '"0 -0.7 0"',
+        'pose_rpy': '"0 0 1.5707963"'
     },
     'robot_2': {
-        'ur_type': 'ur10e',
+        'ur_type': 'ur5',
         'prefix': 'robot_2_',
-        'pose_xyz': '"0.2218704 -0.60678568 -0.1450561"',
-        'pose_rpy': '"-0.0073885 -0.001825 2.34635345"' 
+        'pose_xyz': '"0 0.7 0"',
+        'pose_rpy': '"0 0 -1.5707963"'
     }
 }
 
@@ -42,7 +56,6 @@ def launch_setup(context, *args, **kwargs):
     urdf_file = "ur.urdf.xacro"
     srdf_file = "ur.srdf.xacro"
     rviz_file = "multi_robot_1.rviz"
-
 
     if tool_changeable.perform(context) == "true":
         urdf_file = "ur_tool_changeable.urdf.xacro"

@@ -25,21 +25,21 @@ RP = {
         'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
         'pose_rpy': '"-0.025286 0.0114061 0.0354652"',
         'robot_ip': '192.168.1.100',
-        'reverse_port': '50001',
-        'trajectory_port': '50003',
-        'script_sender_port': '50002',
-        'script_command_port': '50004'
-    },
-    'robot_2': {
-        'ur_type': 'ur5',
-        'prefix': 'robot_2_',
-        'pose_xyz': '"0.2218704 -0.60678568 -0.1450561"',
-        'pose_rpy': '"-0.0073885 -0.001825 2.34635345"',
-        'robot_ip': '192.168.1.123',
         'reverse_port': '50005',
         'trajectory_port': '50007',
         'script_sender_port': '50006',
         'script_command_port': '50008'
+    },
+    'robot_2': {
+        'ur_type': 'ur5',
+        'prefix': 'robot_2_',
+        'pose_xyz': '"0 0.7 0"',
+        'pose_rpy': '"0 0 -1.5707963"',
+        'robot_ip': '192.168.1.100',
+        'reverse_port': '50001',
+        'trajectory_port': '50003',
+        'script_sender_port': '50002',
+        'script_command_port': '50004'
     }
 }
 
