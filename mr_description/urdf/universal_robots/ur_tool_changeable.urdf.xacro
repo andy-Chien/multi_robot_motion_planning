@@ -123,7 +123,7 @@
   </joint>
 
   <joint name="$(arg prefix)suction_tool" type="fixed">
-    <origin xyz="0.02 0 0.323" rpy="0 0 0"/>
+    <origin xyz="0.02 0 0.33" rpy="0 0 0"/>
     <parent link="$(arg prefix)tool_base"/>
     <child link="$(arg prefix)suction_tool_tip"/>
   </joint>
