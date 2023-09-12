@@ -129,13 +129,13 @@
   </joint>
 
   <joint name="$(arg prefix)base-d405" type="fixed">
-    <origin xyz="0.312 -0.134 -0.04" rpy="-1.0443611 0.0053113 -1.5836444"/>
+    <origin xyz="0.24816342683501683 -0.15421478088509458 -0.09905737640547956" rpy="-1.006184 0.0013119 -1.5359343"/>
     <parent link="$(arg prefix)base_link"/>
     <child link="$(arg prefix)d405_link"/>
   </joint>
 
   <joint name="$(arg prefix)base-azure" type="fixed">
-    <origin xyz="0.199425791 -0.590375233 0.856386688" rpy="1.4863183 1.5578821  3.0648614"/>
+    <origin xyz="0.199425791 -0.590375233 0.866386688" rpy="1.4863183 1.5578821  3.0648614"/>
     <parent link="$(arg prefix)base_link"/>
     <child link="camera_base"/>
   </joint>
