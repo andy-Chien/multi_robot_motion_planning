@@ -24,8 +24,8 @@ RP = {
         'description_pkg': "mm_description",
         'config_pkg': "mm_moveit_config",
         'moveit_launch_file': "mm_moveit_with_fake_controller.launch.py",
-        'urdf_file': 'load_mobile_manipulator.xacro',
-        'srdf_file': 'robot.srdf.xacro',
+        'urdf_file': 'mm_tool_changeable.urdf.xacro',
+        'srdf_file': 'mm_tool_changeable.srdf.xacro',
     },
     'robot_2': {
         'ur_type': 'ur5',
