@@ -57,7 +57,7 @@ def launch_setup(context, *args, **kwargs):
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
     # General arguments
-    prefix = LaunchConfiguration("prefix")
+    arm_prefix = LaunchConfiguration("arm_prefix")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
     activate_joint_controller = LaunchConfiguration("activate_joint_controller")
@@ -106,7 +106,7 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("mr_description"), "urdf", "universal_robots", description_file]),
+                [FindPackageShare("mr_description"), "urdf", description_file]),
             " ",
             "robot_ip:=",
             robot_ip,
@@ -159,8 +159,8 @@ def launch_setup(context, *args, **kwargs):
             "output_recipe_filename:=",
             output_recipe_filename,
             " ",
-            "prefix:=",
-            prefix,
+            "arm_prefix:=",
+            arm_prefix,
             " ",
             "use_fake_hardware:=",
             use_fake_hardware,
@@ -230,7 +230,7 @@ def launch_setup(context, *args, **kwargs):
         [FindPackageShare("mr_config"), "config", "universal_robots", "ur_controllers.yaml"]
     )
     ns_text = ns.perform(context)
-    prefix_text = prefix.perform(context)
+    prefix_text = arm_prefix.perform(context)
     if ns_text != "" or prefix_text != "":
         ros2_controllers_yaml = load_yaml("mr_config", "config/universal_robots/ur_controllers.yaml")
         if prefix_text != "":
@@ -532,13 +532,13 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "description_file",
-            default_value="ur.urdf.xacro",
+            default_value="universal_robots/ur.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "prefix",
+            "arm_prefix",
             default_value="",
             description="Prefix of the joint names, useful for \
         multi-robot setup. If changed than also joint names in the controllers' configuration \

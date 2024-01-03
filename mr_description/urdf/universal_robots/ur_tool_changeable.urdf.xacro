@@ -11,7 +11,7 @@
   <xacro:arg name="ur_type" default="ur5x"/>
 
   <!-- parameters -->
-  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="arm_prefix" default="" />
   <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
   <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
   <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
@@ -65,7 +65,7 @@
   <!-- arm -->
   <xacro:ur_robot
     name="$(arg name)"
-    prefix="$(arg prefix)"
+    prefix="$(arg arm_prefix)"
     parent="world"
     joint_limits_parameters_file="$(arg joint_limit_params)"
     kinematics_parameters_file="$(arg kinematics_params)"
@@ -103,40 +103,40 @@
     <origin xyz="$(arg pose_xyz)" rpy="$(arg pose_rpy)" />          <!-- position robot in the world -->
   </xacro:ur_robot>
 
-  <!-- <xacro:tool_marco prefix="$(arg prefix)"/> -->
-  <link name="$(arg prefix)tool_base"/>
-  <link name="$(arg prefix)pj_tool_tip"/>
-  <link name="$(arg prefix)suction_tool_tip"/>
-  <link name="$(arg prefix)d405_link"/>
+  <!-- <xacro:tool_marco arm_prefix="$(arg arm_prefix)"/> -->
+  <link name="$(arg arm_prefix)tool_base"/>
+  <link name="$(arg arm_prefix)pj_tool_tip"/>
+  <link name="$(arg arm_prefix)suction_tool_tip"/>
+  <link name="$(arg arm_prefix)d405_link"/>
   <link name="camera_base"/>
   
-  <joint name="$(arg prefix)tool0-tool_base" type="fixed">
+  <joint name="$(arg arm_prefix)tool0-tool_base" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 -0.78539816339"/>
-    <parent link="$(arg prefix)tool0"/>
-    <child link="$(arg prefix)tool_base"/>
+    <parent link="$(arg arm_prefix)tool0"/>
+    <child link="$(arg arm_prefix)tool_base"/>
   </joint>
 
-  <joint name="$(arg prefix)pj_tool" type="fixed">
+  <joint name="$(arg arm_prefix)pj_tool" type="fixed">
     <origin xyz="0 -0.041 0.176" rpy="0 0 0"/>
-    <parent link="$(arg prefix)tool_base"/>
-    <child link="$(arg prefix)pj_tool_tip"/>
+    <parent link="$(arg arm_prefix)tool_base"/>
+    <child link="$(arg arm_prefix)pj_tool_tip"/>
   </joint>
 
-  <joint name="$(arg prefix)suction_tool" type="fixed">
+  <joint name="$(arg arm_prefix)suction_tool" type="fixed">
     <origin xyz="0.02 0 0.33" rpy="0 0 0"/>
-    <parent link="$(arg prefix)tool_base"/>
-    <child link="$(arg prefix)suction_tool_tip"/>
+    <parent link="$(arg arm_prefix)tool_base"/>
+    <child link="$(arg arm_prefix)suction_tool_tip"/>
   </joint>
 
-  <joint name="$(arg prefix)base-d405" type="fixed">
+  <joint name="$(arg arm_prefix)base-d405" type="fixed">
     <origin xyz="0.24816342683501683 -0.15421478088509458 -0.09905737640547956" rpy="-1.006184 0.0013119 -1.5359343"/>
-    <parent link="$(arg prefix)base_link"/>
-    <child link="$(arg prefix)d405_link"/>
+    <parent link="$(arg arm_prefix)base_link"/>
+    <child link="$(arg arm_prefix)d405_link"/>
   </joint>
 
-  <joint name="$(arg prefix)base-azure" type="fixed">
+  <joint name="$(arg arm_prefix)base-azure" type="fixed">
     <origin xyz="0.199425791 -0.590375233 0.866386688" rpy="1.4863183 1.5578821  3.0648614"/>
-    <parent link="$(arg prefix)base_link"/>
+    <parent link="$(arg arm_prefix)base_link"/>
     <child link="camera_base"/>
   </joint>
 
@@ -158,7 +158,7 @@
     <gazebo>
       <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
         <parameters>$(arg simulation_controllers)</parameters>
-        <controller_manager_node_name>$(arg prefix)controller_manager</controller_manager_node_name>
+        <controller_manager_node_name>$(arg arm_prefix)controller_manager</controller_manager_node_name>
       </plugin>
     </gazebo>
   </xacro:if>

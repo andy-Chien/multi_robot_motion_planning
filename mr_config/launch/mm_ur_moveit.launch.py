@@ -55,7 +55,7 @@ def launch_setup(context, *args, **kwargs):
     safety_k_position = LaunchConfiguration("safety_k_position")
     # General arguments
     warehouse_sqlite_path = LaunchConfiguration("warehouse_sqlite_path")
-    prefix = LaunchConfiguration("prefix")
+    arm_prefix = LaunchConfiguration("arm_prefix")
     use_sim_time = LaunchConfiguration("use_sim_time")
     launch_rviz = LaunchConfiguration("launch_rviz")
     rviz_config_file = LaunchConfiguration("rviz_config_file")
@@ -120,8 +120,8 @@ def launch_setup(context, *args, **kwargs):
             " ",
             "output_recipe_filename:=rtde_output_recipe.txt",
             " ",
-            "prefix:=",
-            prefix,
+            "arm_prefix:=",
+            arm_prefix,
             " ",
             "use_fake_hardware:=",
             use_fake_hardware,
@@ -150,8 +150,8 @@ def launch_setup(context, *args, **kwargs):
             # configs has to be updated!
             "ur",
             " ",
-            "prefix:=",
-            prefix,
+            "arm_prefix:=",
+            arm_prefix,
             " ",
         ]
     )
@@ -196,7 +196,7 @@ def launch_setup(context, *args, **kwargs):
             "extra_robot_padding": 0.03,
         }
     }
-    prefix_text = prefix.perform(context)
+    prefix_text = arm_prefix.perform(context)
     ompl_planning_yaml = load_yaml("mr_config", "config/moveit/ompl_planning.yaml")
     ompl_planning_yaml["planner_configs"]["AdaptPRMkDefault"] \
         ["planner_data_path"] += prefix_text + 'adapt_prm.graph'
@@ -512,7 +512,7 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "prefix",
+            "arm_prefix",
             default_value="",
             description="Prefix of the joint names, useful for \
         multi-robot setup. If changed than also joint names in the controllers' configuration \

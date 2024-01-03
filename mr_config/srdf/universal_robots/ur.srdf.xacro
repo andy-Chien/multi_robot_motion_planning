@@ -4,10 +4,10 @@
   <!-- robot name parameter -->
   <xacro:arg name="name" default="ur"/>
   <!-- parameters -->
-  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="arm_prefix" default="" />
 
   <xacro:include filename="$(find mr_config)/srdf/universal_robots/ur_macro.srdf.xacro"/>
 
-  <xacro:ur_srdf name="$(arg name)" prefix="$(arg prefix)" tool_tip="tool_tip"/>
+  <xacro:ur_srdf name="$(arg name)" prefix="$(arg arm_prefix)" tool_tip="tool_tip"/>
 
 </robot>

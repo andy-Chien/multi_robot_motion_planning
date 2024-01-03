@@ -18,16 +18,26 @@ from ur_moveit_config.launch_common import load_yaml
 RP = {
     'robot_1': {
         'ur_type': 'ur5e',
-        'prefix': 'robot_1_',
+        'arm_prefix': 'robot_1_',
         'pose_xyz': '"0 -0.7 0"',
-        'pose_rpy': '"0 0 1.5707963"'
+        'pose_rpy': '"0 0 1.5707963"',
+        'description_pkg': "mm_description",
+        'config_pkg': "mm_moveit_config",
+        'moveit_launch_file': "mm_moveit_with_fake_controller.launch.py",
+        'urdf_file': 'load_mobile_manipulator.xacro',
+        'srdf_file': 'robot.srdf.xacro',
     },
     'robot_2': {
         'ur_type': 'ur5',
-        'prefix': 'robot_2_',
+        'arm_prefix': 'robot_2_',
         'pose_xyz': '"0 0.7 0"',
-        'pose_rpy': '"0 0 -1.5707963"'
-    }
+        'pose_rpy': '"0 0 -1.5707963"',
+        'description_pkg': "mr_description",
+        'config_pkg': "mr_config",
+        'moveit_launch_file': "ur_moveit.launch.py",
+        'urdf_file': 'universal_robots/ur_tool_changeable.urdf.xacro',
+        'srdf_file': 'universal_robots/ur_tool_changeable.srdf.xacro',
+    },
 }
 
 
@@ -40,13 +50,13 @@ RP = {
 # RP = {
 #     'robot_1': {
 #         'ur_type': 'ur5',
-#         'prefix': 'robot_1_',
+#         'arm_prefix': 'robot_1_',
 #         'pose_xyz': '"0.18610747 0.79149527 -0.09877093"',
 #         'pose_rpy': '"-0.025286 0.0114061 0.0354652"'
 #     },
 #     'robot_2': {
 #         'ur_type': 'ur10e',
-#         'prefix': 'robot_2_',
+#         'arm_prefix': 'robot_2_',
 #         'pose_xyz': '"0.2218704 -0.60678568 -0.1450561"',
 #         'pose_rpy': '"-0.0073885 -0.001825 2.34635345"' 
 #     }
@@ -78,7 +88,7 @@ def launch_setup(context, *args, **kwargs):
     for rn in RP: # rn: robot_name
         print('RPRPRPRPRPRPRPRP = {}, rviz_file = {}'.format(RP, rviz_file))
         joint_limit_params = PathJoinSubstitution(
-            [FindPackageShare("mr_description"), "config", "universal_robots", RP[rn]['ur_type'], "joint_limits.yaml"]
+            [FindPackageShare(RP[rn]['description_pkg']), "config", "universal_robots", RP[rn]['ur_type'], "joint_limits.yaml"]
         )
         kinematics_params = PathJoinSubstitution(
             [FindPackageShare("ur_description"), "config", RP[rn]['ur_type'], "default_kinematics.yaml"]
@@ -94,7 +104,7 @@ def launch_setup(context, *args, **kwargs):
             [
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
-                PathJoinSubstitution([FindPackageShare("mr_description"), "urdf", "universal_robots", urdf_file]),
+                PathJoinSubstitution([FindPackageShare(RP[rn]['description_pkg']), "urdf", RP[rn]['urdf_file']]),
                 " ",
                 "robot_ip:=xxx.yyy.zzz.www",
                 " ",
@@ -113,13 +123,13 @@ def launch_setup(context, *args, **kwargs):
                 "safety_limits:=true",
                 " ",
                 "name:=",
-                "ur",
+                rn,
                 " ",
                 "ur_type:=",
                 RP[rn]['ur_type'],
                 " ",
-                "prefix:=",
-                RP[rn]['prefix'],
+                "arm_prefix:=",
+                RP[rn]['arm_prefix'],
                 " ",
                 "pose_xyz:=",
                 RP[rn]['pose_xyz'],
@@ -127,9 +137,12 @@ def launch_setup(context, *args, **kwargs):
                 "pose_rpy:=",
                 RP[rn]['pose_rpy'],
                 " ",
+                "arm_type:=",
+                RP[rn]['ur_type'],
+                " ",
             ]
         )
-        robot_description = {RP[rn]['prefix'] + "description": robot_description_content}
+        robot_description = {RP[rn]['arm_prefix'] + "description": robot_description_content}
 
         # MoveIt Configuration
         robot_description_semantic_content = Command(
@@ -137,23 +150,24 @@ def launch_setup(context, *args, **kwargs):
                 PathJoinSubstitution([FindExecutable(name="xacro")]),
                 " ",
                 PathJoinSubstitution(
-                    [FindPackageShare("mr_config"), "srdf", "universal_robots", srdf_file]
+                    [FindPackageShare(RP[rn]['config_pkg']), "srdf", RP[rn]['srdf_file']]
                 ),
                 " ",
-                "name:=ur",
+                "name:=",
+                rn,
                 " ",
-                "prefix:=",
-                RP[rn]['prefix'],
+                "arm_prefix:=",
+                RP[rn]['arm_prefix'],
                 " ",
             ]
         )
         robot_description_semantic = {
-            RP[rn]['prefix'] + "description_semantic": robot_description_semantic_content}
+            RP[rn]['arm_prefix'] + "description_semantic": robot_description_semantic_content}
         
         kinematics_yaml = load_yaml("mr_config", "config/moveit/kinematics.yaml")
 
         robot_description_kinematics = {
-            RP[rn]['prefix'] + "description_kinematics": \
+            RP[rn]['arm_prefix'] + "description_kinematics": \
                 kinematics_yaml['/**']['ros__parameters']['robot_description_kinematics']}
         rviz_params.append(robot_description)
         rviz_params.append(robot_description_semantic)
@@ -161,24 +175,34 @@ def launch_setup(context, *args, **kwargs):
 
         launch_moveit = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                [FindPackageShare("mr_config"), "/launch", "/ur_moveit.launch.py"]
+                [FindPackageShare(RP[rn]['config_pkg']), "/launch/", RP[rn]['moveit_launch_file']]
             ),
             launch_arguments={
                 "use_sim_time": use_sim_time,
                 "ur_type": RP[rn]['ur_type'],
+                "arm_type": RP[rn]['ur_type'],
                 "ns": rn,
-                "prefix": RP[rn]['prefix'],
+                "arm_prefix": RP[rn]['arm_prefix'],
                 "rviz_config_file": rn + ".rviz",
                 "pose_xyz": RP[rn]['pose_xyz'],
                 "pose_rpy": RP[rn]['pose_rpy'],
                 "multi_arm": "true",
                 "launch_rviz": "false",
-                "description_file": urdf_file,
-                "srdf_file": srdf_file,
+                "description_file": RP[rn]['urdf_file'],
+                "srdf_file": RP[rn]['srdf_file'],
             }.items(),
         )
         object_to_start.append(launch_moveit)
         
+    static_tf = Node(
+        # namespace=ns,
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_transform_publisher",
+        output="log",
+        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "map"],
+    )
+    object_to_start.append(static_tf)
 
     ompl_planning_yaml = load_yaml("mr_config", "config/moveit/ompl_planning.yaml")
     ompl_planning_pipeline_config = {"move_group": ompl_planning_yaml}
@@ -214,14 +238,14 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "robot_1",
-            default_value="false",
+            default_value="true",
             description="Launch robot 1 or not",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "robot_2",
-            default_value="false",
+            default_value="true",
             description="Launch robot 2 or not",
         )
     )

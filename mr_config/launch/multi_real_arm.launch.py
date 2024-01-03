@@ -21,13 +21,13 @@ from ur_moveit_config.launch_common import load_yaml
 # RP = {
 #     'robot_1': {
 #         'ur_type': 'ur5',
-#         'prefix': 'robot_1_',
+#         'arm_prefix': 'robot_1_',
 #         'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
 #         'pose_rpy': '"-0.025286 0.0114061 0.0354652"'
 #     },
 #     'robot_2': {
 #         'ur_type': 'ur10e',
-#         'prefix': 'robot_2_',
+#         'arm_prefix': 'robot_2_',
 #         'pose_xyz': '"0.2218704 -0.60678568 -0.1450561"',
 #         'pose_rpy': '"-0.0073885 -0.001825 2.34635345"' 
 #     }
@@ -35,13 +35,13 @@ from ur_moveit_config.launch_common import load_yaml
 RP = {
     'robot_1': {
         'ur_type': 'ur5e',
-        'prefix': 'robot_1_',
+        'arm_prefix': 'robot_1_',
         'pose_xyz': '"0 -0.7 0"',
         'pose_rpy': '"0 0 1.5707963"'
     },
     'robot_2': {
         'ur_type': 'ur5',
-        'prefix': 'robot_2_',
+        'arm_prefix': 'robot_2_',
         'pose_xyz': '"0 0.7 0"',
         'pose_rpy': '"0 0 -1.5707963"'
     }
@@ -113,8 +113,8 @@ def launch_setup(context, *args, **kwargs):
                 "ur_type:=",
                 RP[rn]['ur_type'],
                 " ",
-                "prefix:=",
-                RP[rn]['prefix'],
+                "arm_prefix:=",
+                RP[rn]['arm_prefix'],
                 " ",
                 "pose_xyz:=",
                 RP[rn]['pose_xyz'],
@@ -124,7 +124,7 @@ def launch_setup(context, *args, **kwargs):
                 " ",
             ]
         )
-        robot_description = {RP[rn]['prefix'] + "description": robot_description_content}
+        robot_description = {RP[rn]['arm_prefix'] + "description": robot_description_content}
 
         # MoveIt Configuration
         robot_description_semantic_content = Command(
@@ -137,18 +137,18 @@ def launch_setup(context, *args, **kwargs):
                 " ",
                 "name:=ur",
                 " ",
-                "prefix:=",
-                RP[rn]['prefix'],
+                "arm_prefix:=",
+                RP[rn]['arm_prefix'],
                 " ",
             ]
         )
         robot_description_semantic = {
-            RP[rn]['prefix'] + "description_semantic": robot_description_semantic_content}
+            RP[rn]['arm_prefix'] + "description_semantic": robot_description_semantic_content}
         
         kinematics_yaml = load_yaml("mr_config", "config/moveit/kinematics.yaml")
 
         robot_description_kinematics = {
-            RP[rn]['prefix'] + "description_kinematics": \
+            RP[rn]['arm_prefix'] + "description_kinematics": \
                 kinematics_yaml['/**']['ros__parameters']['robot_description_kinematics']}
         rviz_params.append(robot_description)
         rviz_params.append(robot_description_semantic)
@@ -162,7 +162,7 @@ def launch_setup(context, *args, **kwargs):
                 "use_sim_time": use_sim_time,
                 "ur_type": RP[rn]['ur_type'],
                 "ns": rn,
-                "prefix": RP[rn]['prefix'],
+                "arm_prefix": RP[rn]['arm_prefix'],
                 "rviz_config_file": rn + ".rviz",
                 "pose_xyz": RP[rn]['pose_xyz'],
                 "pose_rpy": RP[rn]['pose_rpy'],

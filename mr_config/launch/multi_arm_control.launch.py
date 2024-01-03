@@ -21,7 +21,7 @@ from ur_moveit_config.launch_common import load_yaml
 RP = {
     'robot_1': {
         'ur_type': 'ur5e',
-        'prefix': 'robot_1_',
+        'arm_prefix': 'robot_1_',
         'pose_xyz': '"0.18610747 0.79149527 -0.08777093"',
         'pose_rpy': '"-0.025286 0.0114061 0.0354652"',
         'robot_ip': '192.168.1.100',
@@ -32,7 +32,7 @@ RP = {
     },
     'robot_2': {
         'ur_type': 'ur5',
-        'prefix': 'robot_2_',
+        'arm_prefix': 'robot_2_',
         'pose_xyz': '"0 0.7 0"',
         'pose_rpy': '"0 0 -1.5707963"',
         'robot_ip': '192.168.1.100',
@@ -73,7 +73,7 @@ def launch_setup(context, *args, **kwargs):
                 "trajectory_port": RP[rn]['trajectory_port'],
                 "script_sender_port": RP[rn]['script_sender_port'],
                 "script_command_port": RP[rn]['script_command_port'],
-                "prefix": RP[rn]['prefix'],
+                "arm_prefix": RP[rn]['arm_prefix'],
                 "rviz_config_file": rn + ".rviz",
                 "pose_xyz": RP[rn]['pose_xyz'],
                 "pose_rpy": RP[rn]['pose_rpy'],
