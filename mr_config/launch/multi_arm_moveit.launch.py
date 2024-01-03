@@ -16,6 +16,18 @@ from ur_moveit_config.launch_common import load_yaml
 
 # rviz random test
 RP = {
+    # 'robot_1': {
+    #     'ur_type': 'ur5e',
+    #     'arm_prefix': 'robot_1_',
+    #     'pose_xyz': '"0 -0.7 0"',
+    #     'pose_rpy': '"0 0 1.5707963"',
+    #     'description_pkg': "mr_description",
+    #     'config_pkg': "mr_config",
+    #     'moveit_launch_file': "ur_moveit.launch.py",
+    #     'urdf_file': 'universal_robots/ur_tool_changeable.urdf.xacro',
+    #     'srdf_file': 'universal_robots/ur_tool_changeable.srdf.xacro',
+    #     'planner_config_name': 'ur',
+    # },
     'robot_1': {
         'ur_type': 'ur5e',
         'arm_prefix': 'robot_1_',
@@ -26,6 +38,7 @@ RP = {
         'moveit_launch_file': "mm_moveit_with_fake_controller.launch.py",
         'urdf_file': 'mm_tool_changeable.urdf.xacro',
         'srdf_file': 'mm_tool_changeable.srdf.xacro',
+        'planner_config_name': 'mobile_manipulator',
     },
     'robot_2': {
         'ur_type': 'ur5',
@@ -37,6 +50,7 @@ RP = {
         'moveit_launch_file': "ur_moveit.launch.py",
         'urdf_file': 'universal_robots/ur_tool_changeable.urdf.xacro',
         'srdf_file': 'universal_robots/ur_tool_changeable.srdf.xacro',
+        'planner_config_name': 'ur',
     },
 }
 
@@ -123,7 +137,7 @@ def launch_setup(context, *args, **kwargs):
                 "safety_limits:=true",
                 " ",
                 "name:=",
-                rn,
+                RP[rn]['planner_config_name'],
                 " ",
                 "ur_type:=",
                 RP[rn]['ur_type'],
@@ -154,7 +168,7 @@ def launch_setup(context, *args, **kwargs):
                 ),
                 " ",
                 "name:=",
-                rn,
+                RP[rn]['planner_config_name'],
                 " ",
                 "arm_prefix:=",
                 RP[rn]['arm_prefix'],
